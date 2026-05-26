@@ -53,14 +53,17 @@ function OrgRow({ unit, templateId, depth = 0 }: { unit: OrgUnit; templateId: st
           )}
         </div>
         {unitTask && (
-          <span className={`text-xs px-2.5 py-1 rounded-full font-medium shrink-0 ${statusColor(unitTask.status)}`}>
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${statusColor(unitTask.status)}`}>
             {statusLabel(unitTask.status)}
           </span>
         )}
         {pct !== null && (
-          <div className="w-28 shrink-0">
+          <div className="hidden sm:block w-28 shrink-0">
             <ProgressBar value={pct} size="sm" />
           </div>
+        )}
+        {pct !== null && (
+          <span className="sm:hidden text-xs font-semibold text-gray-600 shrink-0">{pct}%</span>
         )}
       </div>
       {open && children.map(child => (
@@ -97,24 +100,24 @@ export default function ProgressPage() {
     : orgUnits.filter(u => u.id === currentUser?.org_unit_id)
 
   return (
-    <div className="px-8 py-8 max-w-5xl mx-auto">
-      <div className="flex items-start justify-between gap-4 mb-8">
+    <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-5xl mx-auto">
+      <div className="flex items-start justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Progress Overview</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Progress Overview</h1>
           <p className="text-gray-500 text-sm mt-1">Track activity completion across your organisation</p>
         </div>
         <Link
           href="/assign"
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors shrink-0"
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 sm:px-4 py-2.5 rounded-lg transition-colors shrink-0"
         >
-          + Assign Task
+          + <span className="hidden sm:inline">Assign Task</span><span className="sm:hidden">Assign</span>
         </Link>
       </div>
 
       {/* Activity selector — card grid */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Select Activity</h2>
-        <div className="grid sm:grid-cols-3 gap-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {templates.map(t => {
             const pct = computeProgress(t.id)
             const isSelected = selectedTemplate === t.id
@@ -144,7 +147,7 @@ export default function ProgressPage() {
       {template && (
         <>
           {/* Summary stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-6 sm:mb-8">
             <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 flex items-center gap-4">
               <div>
                 <p className="text-4xl font-bold text-gray-900">{overallPct}%</p>

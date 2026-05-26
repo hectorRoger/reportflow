@@ -26,7 +26,7 @@ const NAV: NavItem[] = [
     roles: ['division_manager', 'c_level', 'ceo'] },
 ]
 
-export function Sidebar() {
+export function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname()
   const router = useRouter()
   const { currentUser, logout } = useApp()
@@ -36,11 +36,12 @@ export function Sidebar() {
 
   function handleLogout() {
     logout()
+    onClose?.()
     router.push('/login')
   }
 
   return (
-    <aside className="w-64 bg-indigo-900 text-white flex flex-col min-h-screen shrink-0">
+    <aside className="w-64 bg-indigo-900 text-white flex flex-col h-full shrink-0">
       {/* Logo */}
       <div className="px-6 py-5 border-b border-indigo-800">
         <div className="flex items-center gap-2">
@@ -53,13 +54,14 @@ export function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {visibleNav.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
           return (
             <Link
               key={href}
               href={href}
+              onClick={() => onClose?.()}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 active
                   ? 'bg-indigo-700 text-white'

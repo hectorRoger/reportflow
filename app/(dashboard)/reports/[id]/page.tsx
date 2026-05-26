@@ -60,11 +60,11 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
     const answered = template.fields.filter(f => responses[f.id] !== undefined && responses[f.id] !== '').length
 
     return (
-      <div className="px-8 py-8 max-w-2xl mx-auto">
+      <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-2xl mx-auto">
         <button onClick={() => setFillTaskId(null)} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6">
           <ChevronLeft size={16} /> Back to report
         </button>
-        <div className="bg-white rounded-xl border border-gray-200 p-8">
+        <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-8">
           <div className="mb-6">
             <p className="text-xs text-indigo-600 font-medium uppercase tracking-wide">{template.period}</p>
             <h1 className="text-xl font-bold text-gray-900 mt-1">{template.title}</h1>
@@ -179,26 +179,30 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="px-8 py-8 max-w-4xl mx-auto">
+    <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-4xl mx-auto">
       <Link href="/reports" className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6">
         <ChevronLeft size={16} /> Back to Reports
       </Link>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-        <div className="flex items-start justify-between gap-4">
-          <div>
+      <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
             <p className="text-xs text-indigo-600 font-medium uppercase tracking-wide">{template.period}</p>
-            <h1 className="text-xl font-bold text-gray-900 mt-1">{template.title}</h1>
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900 mt-1">{template.title}</h1>
             <p className="text-gray-500 text-sm mt-1">{template.description}</p>
-            <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-3 text-xs text-gray-400">
               <span className="flex items-center gap-1"><Clock size={12} /> Due {formatDate(template.due_date)}</span>
               <span className="flex items-center gap-1"><Users size={12} /> {template.assigned_levels.map(levelLabel).join(', ')}</span>
             </div>
           </div>
-          <div className="w-36 shrink-0 text-right">
-            <p className="text-2xl font-bold text-gray-900">{progress}%</p>
-            <p className="text-xs text-gray-400 mb-2">overall complete</p>
-            <ProgressBar value={progress} size="sm" showLabel={false} />
+          <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:w-36 shrink-0">
+            <div className="flex items-baseline gap-1">
+              <p className="text-2xl font-bold text-gray-900">{progress}%</p>
+              <p className="text-xs text-gray-400">complete</p>
+            </div>
+            <div className="flex-1 sm:w-full">
+              <ProgressBar value={progress} size="sm" showLabel={false} />
+            </div>
           </div>
         </div>
       </div>
@@ -250,7 +254,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             return (
               <div key={task.id}>
                 <div
-                  className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 cursor-pointer"
+                  className="flex items-center justify-between px-4 sm:px-6 py-4 hover:bg-gray-50 cursor-pointer"
                   onClick={() => setExpandedTask(isExpanded ? null : task.id)}
                 >
                   <div className="flex items-center gap-3">
@@ -291,7 +295,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                     {childTasks.map(child => {
                       const childUnit = getOrgUnit(child.org_unit_id)
                       return (
-                        <div key={child.id} className="flex items-center justify-between pl-16 pr-6 py-3">
+                        <div key={child.id} className="flex items-center justify-between pl-10 sm:pl-16 pr-4 sm:pr-6 py-3">
                           <div>
                             <p className="text-sm text-gray-700">{childUnit?.name}</p>
                             <p className="text-xs text-gray-400">{childUnit?.level ? levelLabel(childUnit.level) : ''}</p>

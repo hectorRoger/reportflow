@@ -19,9 +19,9 @@ export default function DashboardPage() {
   const recentTasks = myTasks.slice(0, 5)
 
   return (
-    <div className="px-8 py-8 max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
+    <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-6xl mx-auto">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
           Good morning, {currentUser?.name.split(' ')[0]} 👋
         </h1>
         <p className="text-gray-500 text-sm mt-1">
@@ -29,7 +29,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <StatsCard
           label="Active Reports"
           value={activeTemplates}
@@ -58,7 +58,7 @@ export default function DashboardPage() {
         />
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-gray-900">Active Reports</h2>

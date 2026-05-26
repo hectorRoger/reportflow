@@ -11,10 +11,10 @@ export default function ReportsPage() {
   const canCreate = currentUser?.role === 'ceo' || currentUser?.role === 'c_level'
 
   return (
-    <div className="px-8 py-8 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+    <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-6xl mx-auto">
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Reports</h1>
           <p className="text-gray-500 text-sm mt-1">All reporting templates and their progress</p>
         </div>
         {canCreate && (
@@ -40,10 +40,10 @@ export default function ReportsPage() {
               href={`/reports/${template.id}`}
               className="bg-white border border-gray-200 rounded-xl p-6 hover:border-indigo-300 hover:shadow-sm transition-all group"
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-start gap-4 flex-1 min-w-0">
-                  <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                    <FileText size={18} className="text-indigo-600" />
+              <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 bg-indigo-50 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                    <FileText size={17} className="text-indigo-600" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -54,7 +54,7 @@ export default function ReportsPage() {
                     </div>
                     <p className="text-sm text-gray-500 mt-1 line-clamp-1">{template.description}</p>
 
-                    <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 sm:mt-3 text-xs text-gray-400">
                       <span className="flex items-center gap-1">
                         <Calendar size={12} />
                         {template.period} · Due {formatDate(template.due_date)}
@@ -68,7 +68,7 @@ export default function ReportsPage() {
                   </div>
                 </div>
 
-                <div className="w-40 shrink-0">
+                <div className="sm:w-40 shrink-0">
                   <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
                     <span>Progress</span>
                     <span>{submitted}/{tasks.length} submitted</span>

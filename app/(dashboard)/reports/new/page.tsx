@@ -91,12 +91,12 @@ export default function NewReportPage() {
   }
 
   return (
-    <div className="px-8 py-8 max-w-3xl mx-auto">
+    <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-3xl mx-auto">
       <div className="mb-6">
         <Link href="/reports" className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
           <ChevronLeft size={16} /> Back to Reports
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Create New Report</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Create New Report</h1>
         <p className="text-gray-500 text-sm mt-1">Define the template, fields, and who needs to fill it.</p>
       </div>
 
