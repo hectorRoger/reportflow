@@ -71,13 +71,14 @@ export const users: User[] = [
 export const templates: ReportTemplate[] = [
   {
     id: 't1',
-    title: 'ICT Infrastructure Monthly Report',
-    description: 'Monthly tracking of connectivity coverage, infrastructure deployments, and operational status.',
+    title: 'ICT Infrastructure Weekly Report',
+    description: 'Weekly tracking of connectivity coverage, infrastructure deployments, and operational status.',
     status: 'active',
     created_by: 'u-ceo',
-    created_at: '2026-05-01T08:00:00Z',
-    due_date: '2026-05-31',
-    period: 'May 2026',
+    created_at: '2026-05-20T08:00:00Z',
+    due_date: '2026-05-30',
+    period: 'Week 22 — May 26–30, 2026',
+    frequency: 'weekly',
     assigned_levels: ['unit', 'division'],
     fields: [
       { id: 'f1', label: 'Number of sites with active connectivity', type: 'number', required: true, help_text: 'Schools, hospitals, government offices' },
@@ -94,6 +95,7 @@ export const templates: ReportTemplate[] = [
     created_at: '2026-04-01T08:00:00Z',
     due_date: '2026-06-30',
     period: 'Q2 2026',
+    frequency: 'quarterly',
     assigned_levels: ['unit', 'division'],
     fields: [
       { id: 'f1', label: 'Registered platform users',         type: 'number',     required: true },
@@ -111,6 +113,7 @@ export const templates: ReportTemplate[] = [
     created_at: '2026-05-20T08:00:00Z',
     due_date: '2026-07-31',
     period: 'FY 2026',
+    frequency: 'monthly',
     assigned_levels: ['unit', 'division', 'directorate'],
     fields: [
       { id: 'f1', label: 'Firewall & antivirus up to date?',    type: 'checkbox',   required: true },
@@ -143,6 +146,7 @@ export const tasks: Task[] = [
   {
     id: 'tk-s2-t1', template_id: 't1', org_unit_id: 'unit-fiber', parent_task_id: null,
     assigned_to_user_id: 'u-s2', assigned_by_user_id: 'u-mgr1',
+    depends_on: ['tk-s1-t1'],  // fiber backbone starts only after connectivity survey is approved
     status: 'in_progress', due_date: '2026-05-31',
     responses: { f1: 18 },
     report: {
@@ -155,6 +159,7 @@ export const tasks: Task[] = [
   {
     id: 'tk-s3-t1', template_id: 't1', org_unit_id: 'unit-conn', parent_task_id: null,
     assigned_to_user_id: 'u-s3', assigned_by_user_id: 'u-mgr1',
+    depends_on: ['tk-s2-t1'],  // Frank's task starts only after Ester's fiber work is approved
     status: 'not_started', due_date: '2026-05-31',
     responses: {},
   },
@@ -189,6 +194,7 @@ export const tasks: Task[] = [
   {
     id: 'tk-mgr1-t1', template_id: 't1', org_unit_id: 'div-netops', parent_task_id: null,
     assigned_to_user_id: 'u-mgr1', assigned_by_user_id: 'u-cto',
+    depends_on: ['tk-s1-t1', 'tk-s2-t1'],  // Bruce's rollup depends on both unit tasks being approved
     status: 'in_progress', due_date: '2026-05-31',
     responses: { f1: 65, f2: 74 },
     report: {

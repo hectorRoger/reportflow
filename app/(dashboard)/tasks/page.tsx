@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { CheckCircle2, Circle, Clock, AlertCircle, ChevronRight, PlayCircle } from 'lucide-react'
+import { CheckCircle2, Circle, Clock, AlertCircle, ChevronRight, PlayCircle, Lock } from 'lucide-react'
 import { useApp } from '@/lib/context'
 import { statusColor, formatDate, isOverdue } from '@/lib/utils'
 import type { Task } from '@/lib/types'
@@ -16,13 +16,14 @@ function TaskStatusIcon({ task }: { task: Task }) {
 
 export default function TasksPage() {
   const router = useRouter()
-  const { currentUser, getTasksForUser, getTemplate, getOrgUnit } = useApp()
+  const { currentUser, getTasksForUser, getTemplate, getOrgUnit, isTaskBlocked } = useApp()
   const isReporter = currentUser?.role === 'staff'
 
   const allTasks = getTasksForUser().filter(t => t.parent_task_id === null)
   const pending = allTasks.filter(t => t.status === 'not_started' || t.status === 'in_progress')
   const done = allTasks.filter(t => t.status === 'submitted' || t.status === 'approved')
-  const firstPending = pending[0]
+  // Skip blocked tasks for the "Next Up" CTA so we surface actionable work first
+  const firstPending = pending.find(t => !isTaskBlocked(t.id))
 
   // Reporter-focused queue view
   if (isReporter) {
@@ -85,6 +86,7 @@ export default function TasksPage() {
                   const overdue = (task.status === 'not_started' || task.status === 'in_progress') && isOverdue(task.due_date)
                   const isDone = task.status === 'submitted' || task.status === 'approved'
                   const isRejected = task.status === 'rejected'
+                  const taskBlocked = isTaskBlocked(task.id)
 
                   return (
                     <Link
@@ -95,6 +97,8 @@ export default function TasksPage() {
                           ? 'border-gray-100 opacity-70'
                           : isRejected
                           ? 'border-red-200 bg-red-50'
+                          : taskBlocked
+                          ? 'border-amber-200 bg-amber-50/30'
                           : overdue
                           ? 'border-red-200 hover:border-red-300'
                           : 'border-gray-200 hover:border-indigo-300 hover:shadow-sm'
@@ -108,17 +112,22 @@ export default function TasksPage() {
                         </p>
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-xs text-gray-400">{template?.period}</span>
-                          {overdue && (
+                          {taskBlocked && (
+                            <span className="flex items-center gap-0.5 text-xs text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">
+                              <Lock size={10} /> Blocked
+                            </span>
+                          )}
+                          {!taskBlocked && overdue && (
                             <span className="flex items-center gap-0.5 text-xs text-red-500">
                               <AlertCircle size={11} /> Overdue
                             </span>
                           )}
-                          {!overdue && !isDone && (
+                          {!taskBlocked && !overdue && !isDone && (
                             <span className="flex items-center gap-0.5 text-xs text-gray-400">
                               <Clock size={11} /> Due {formatDate(task.due_date)}
                             </span>
                           )}
-                          {task.report && !isDone && (
+                          {!taskBlocked && task.report && !isDone && (
                             <span className="text-xs text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">
                               {task.report.progress_pct}% progress saved
                             </span>
@@ -173,6 +182,7 @@ export default function TasksPage() {
           <tbody className="divide-y divide-gray-100">
             {allTasks.map(task => {
               const template = getTemplate(task.template_id)
+              const taskBlocked = isTaskBlocked(task.id)
               return (
                 <tr key={task.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
@@ -182,9 +192,16 @@ export default function TasksPage() {
                   <td className="px-4 py-4 text-gray-600 text-xs">{getOrgUnit(task.org_unit_id)?.name ?? task.org_unit_id}</td>
                   <td className="px-4 py-4 text-xs text-gray-500">{formatDate(task.due_date)}</td>
                   <td className="px-4 py-4">
-                    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${statusColor(task.status)}`}>
-                      {task.status.replace('_', ' ')}
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${statusColor(task.status)}`}>
+                        {task.status.replace('_', ' ')}
+                      </span>
+                      {taskBlocked && (
+                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                          <Lock size={9} /> Blocked
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-4 text-right">
                     <Link href={`/tasks/${task.id}`} className="text-xs text-indigo-600 hover:underline">View →</Link>

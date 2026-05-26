@@ -9,7 +9,7 @@ import type { Task } from '@/lib/types'
 
 export default function AssignTaskPage() {
   const router = useRouter()
-  const { currentUser, templates, getDirectReports, getOrgUnit, createTask } = useApp()
+  const { currentUser, templates, tasks, getDirectReports, getOrgUnit, createTask, getTemplate } = useApp()
 
   const canAssign = currentUser?.role === 'division_manager' ||
     currentUser?.role === 'c_level' ||
@@ -22,8 +22,12 @@ export default function AssignTaskPage() {
   const [selectedUserId, setSelectedUserId] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [instructions, setInstructions] = useState('')
+  const [dependsOn, setDependsOn] = useState<string[]>([])
   const [done, setDone] = useState(false)
   const [saving, setSaving] = useState(false)
+
+  // All top-level tasks as dependency candidates
+  const candidateTasks = tasks.filter(t => t.parent_task_id === null)
 
   if (!canAssign) {
     return (
@@ -53,6 +57,7 @@ export default function AssignTaskPage() {
       template_id: selectedTemplateId,
       org_unit_id: selectedUser!.org_unit_id,
       parent_task_id: null,
+      depends_on: dependsOn.length > 0 ? dependsOn : undefined,
       assigned_to_user_id: selectedUserId,
       assigned_by_user_id: currentUser!.id,
       instructions: instructions.trim() || undefined,
@@ -71,6 +76,7 @@ export default function AssignTaskPage() {
     setSelectedUserId('')
     setDueDate('')
     setInstructions('')
+    setDependsOn([])
   }
 
   if (done) {
@@ -85,7 +91,13 @@ export default function AssignTaskPage() {
             <strong>{selectedTemplate?.title}</strong> has been assigned to{' '}
             <strong>{selectedUser?.name}</strong>.
           </p>
-          <p className="text-xs text-gray-400 mb-8">Due {formatDate(dueDate)}</p>
+          <p className="text-xs text-gray-400">Due {formatDate(dueDate)}</p>
+          {dependsOn.length > 0 && (
+            <p className="text-xs text-amber-600 mt-1 mb-8">
+              Blocked until {dependsOn.length} prerequisite task{dependsOn.length > 1 ? 's are' : ' is'} approved.
+            </p>
+          )}
+          {dependsOn.length === 0 && <div className="mb-8" />}
           <div className="space-y-2">
             <button
               onClick={resetForm}
@@ -210,6 +222,48 @@ export default function AssignTaskPage() {
               placeholder="e.g. Focus on schools in the northern cluster. Include tower status for sites 12–15."
               className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
             />
+          </div>
+
+          {/* Dependencies */}
+          <div className="p-6">
+            <label className="block text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-1">
+              Step 5 <span className="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <p className="font-semibold text-gray-900 mb-1">Does this task depend on other tasks?</p>
+            <p className="text-xs text-gray-400 mb-3">
+              The assignee won&apos;t be able to start until all selected tasks are approved.
+            </p>
+            <div className="border border-gray-200 rounded-xl overflow-hidden max-h-52 overflow-y-auto">
+              {candidateTasks.length === 0 ? (
+                <p className="text-xs text-gray-400 text-center py-4">No existing tasks to depend on.</p>
+              ) : (
+                candidateTasks.map(t => {
+                  const tmpl = getTemplate(t.template_id)
+                  const unit = getOrgUnit(t.org_unit_id)
+                  return (
+                    <label key={t.id} className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 px-4 py-3 border-b border-gray-100 last:border-0">
+                      <input
+                        type="checkbox"
+                        checked={dependsOn.includes(t.id)}
+                        onChange={e => setDependsOn(prev =>
+                          e.target.checked ? [...prev, t.id] : prev.filter(id => id !== t.id)
+                        )}
+                        className="w-4 h-4 rounded text-indigo-600 shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-800 truncate">{tmpl?.title ?? t.template_id}</p>
+                        <p className="text-xs text-gray-400">{unit?.name} · {t.status.replace('_', ' ')}</p>
+                      </div>
+                    </label>
+                  )
+                })
+              )}
+            </div>
+            {dependsOn.length > 0 && (
+              <p className="text-xs text-indigo-600 mt-2 font-medium">
+                {dependsOn.length} prerequisite{dependsOn.length > 1 ? 's' : ''} selected
+              </p>
+            )}
           </div>
 
         </div>

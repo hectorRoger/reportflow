@@ -25,8 +25,11 @@ interface AppState {
   getChildUnits: (parentId: string) => OrgUnit[]
   getChildTasks: (parentTaskId: string) => Task[]
   computeProgress: (templateId: string) => number
-  getDirectReports: () => User[]         // users one level below current user
-  getScopeOrgUnitIds: () => string[]     // all org unit IDs in current user's scope
+  getDirectReports: () => User[]
+  getScopeOrgUnitIds: () => string[]
+  isTaskBlocked: (taskId: string) => boolean
+  getBlockingTasks: (taskId: string) => Task[]
+  computeChildProgress: (parentTaskId: string) => number
 }
 
 const AppContext = createContext<AppState | null>(null)
@@ -131,6 +134,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return Math.round((done / relevant.length) * 100)
   }
 
+  /** Returns true if any predecessor task is not yet approved */
+  function isTaskBlocked(taskId: string): boolean {
+    const task = tasks.find(t => t.id === taskId)
+    if (!task?.depends_on?.length) return false
+    return task.depends_on.some(depId => {
+      const dep = tasks.find(t => t.id === depId)
+      return !dep || dep.status !== 'approved'
+    })
+  }
+
+  /** Returns the predecessor tasks that are blocking this task */
+  function getBlockingTasks(taskId: string): Task[] {
+    const task = tasks.find(t => t.id === taskId)
+    if (!task?.depends_on?.length) return []
+    return task.depends_on
+      .map(depId => tasks.find(t => t.id === depId))
+      .filter((t): t is Task => !!t && t.status !== 'approved')
+  }
+
+  /** Average progress_pct of all direct children of a parent task */
+  function computeChildProgress(parentTaskId: string): number {
+    const children = tasks.filter(t => t.parent_task_id === parentTaskId)
+    if (children.length === 0) return 0
+    const sum = children.reduce((acc, t) => acc + (t.report?.progress_pct ?? 0), 0)
+    return Math.round(sum / children.length)
+  }
+
   /**
    * Users who are direct reports of the current user:
    * - Division Manager → staff in their division's units
@@ -159,6 +189,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       login, logout, addTemplate, updateTemplate, createTask, updateTask,
       getOrgUnit, getUser, getTemplate, getTasksForUser, getTasksForTemplate,
       getChildUnits, getChildTasks, computeProgress, getDirectReports, getScopeOrgUnitIds,
+      isTaskBlocked, getBlockingTasks, computeChildProgress,
     }}>
       {children}
     </AppContext.Provider>

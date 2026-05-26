@@ -3,6 +3,7 @@ export type OrgLevel = 'organization' | 'directorate' | 'division' | 'unit'
 export type FieldType = 'text' | 'number' | 'percentage' | 'date' | 'select' | 'textarea' | 'checkbox' | 'file'
 export type ReportStatus = 'draft' | 'active' | 'closed'
 export type TaskStatus = 'not_started' | 'in_progress' | 'submitted' | 'approved' | 'rejected'
+export type ReportFrequency = 'weekly' | 'biweekly' | 'monthly' | 'quarterly'
 
 export interface OrgUnit {
   id: string
@@ -38,6 +39,7 @@ export interface ReportTemplate {
   created_at: string
   due_date: string
   period: string
+  frequency?: ReportFrequency
   assigned_levels: OrgLevel[]
   fields: FormField[]
 }
@@ -55,6 +57,7 @@ export interface Task {
   template_id: string
   org_unit_id: string
   parent_task_id: string | null
+  depends_on?: string[]           // task IDs that must be 'approved' before this starts
   assigned_to_user_id?: string   // specific user assigned
   assigned_by_user_id?: string   // who created/assigned this task
   instructions?: string          // extra notes from the assigner

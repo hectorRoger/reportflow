@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Plus, FileText, Users, Calendar } from 'lucide-react'
 import { useApp } from '@/lib/context'
 import { ProgressBar } from '@/components/progress-bar'
-import { reportStatusColor, formatDate, levelLabel } from '@/lib/utils'
+import { reportStatusColor, formatDate, levelLabel, frequencyLabel, frequencyBadgeColor } from '@/lib/utils'
 
 export default function ReportsPage() {
   const { currentUser, templates, computeProgress, getTasksForTemplate } = useApp()
@@ -51,6 +51,11 @@ export default function ReportsPage() {
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${reportStatusColor(template.status)}`}>
                         {template.status.charAt(0).toUpperCase() + template.status.slice(1)}
                       </span>
+                      {template.frequency && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${frequencyBadgeColor(template.frequency)}`}>
+                          {frequencyLabel(template.frequency)}
+                        </span>
+                      )}
                     </div>
                     <p className="text-sm text-gray-500 mt-1 line-clamp-1">{template.description}</p>
 

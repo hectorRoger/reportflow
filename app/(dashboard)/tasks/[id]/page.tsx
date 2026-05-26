@@ -2,15 +2,15 @@
 
 import { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronLeft, CheckCircle2, ChevronRight, Paperclip, AlertCircle } from 'lucide-react'
+import { ChevronLeft, CheckCircle2, ChevronRight, Paperclip, AlertCircle, Lock } from 'lucide-react'
 import { useApp } from '@/lib/context'
-import { formatDate, isOverdue } from '@/lib/utils'
+import { formatDate, isOverdue, frequencyLabel, frequencyBadgeColor } from '@/lib/utils'
 import type { TaskReport } from '@/lib/types'
 
 export default function TaskReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
-  const { currentUser, tasks, getTemplate, getOrgUnit, updateTask, getTasksForUser } = useApp()
+  const { currentUser, tasks, getTemplate, getOrgUnit, updateTask, getTasksForUser, isTaskBlocked, getBlockingTasks } = useApp()
 
   const task = tasks.find(t => t.id === id)
   const template = task ? getTemplate(task.template_id) : null
@@ -38,8 +38,9 @@ export default function TaskReportPage({ params }: { params: Promise<{ id: strin
   }
 
   const isReadOnly = task.status === 'submitted' || task.status === 'approved'
-  // rejected tasks can be re-filled
   const overdue = isOverdue(task.due_date) && !isReadOnly
+  const blocked = !isReadOnly && task.status === 'not_started' && isTaskBlocked(task.id)
+  const blockingTasks = blocked ? getBlockingTasks(task.id) : []
 
   function set(field: keyof TaskReport, value: string | number) {
     setReport(r => ({ ...r, [field]: value }))
@@ -48,8 +49,20 @@ export default function TaskReportPage({ params }: { params: Promise<{ id: strin
   async function handleSaveDraft() {
     setSaving(true)
     await new Promise(r => setTimeout(r, 300))
-    updateTask(task!.id, { status: 'in_progress', report })
-    setSaving(false)
+    if (report.progress_pct === 100) {
+      // Auto-submit when task is complete
+      if (!report.accomplishments.trim()) {
+        setSaving(false)
+        alert('Please describe what you accomplished before submitting.')
+        return
+      }
+      updateTask(task!.id, { status: 'submitted', submitted_at: new Date().toISOString(), report })
+      setSaving(false)
+      setSubmitted(true)
+    } else {
+      updateTask(task!.id, { status: 'in_progress', report })
+      setSaving(false)
+    }
   }
 
   async function handleSubmit() {
@@ -145,6 +158,20 @@ export default function TaskReportPage({ params }: { params: Promise<{ id: strin
           </div>
         )}
 
+        {/* Blocked banner */}
+        {blocked && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 mb-5 flex items-start gap-3">
+            <Lock size={15} className="text-amber-500 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-xs font-semibold text-amber-700 mb-1">This task is blocked</p>
+              <p className="text-sm text-amber-800">
+                Waiting for approval of:{' '}
+                {blockingTasks.map(t => getTemplate(t.template_id)?.title ?? t.id).join(', ')}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Task header */}
         <div className="mb-8">
           {overdue && (
@@ -154,7 +181,14 @@ export default function TaskReportPage({ params }: { params: Promise<{ id: strin
           )}
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs text-indigo-600 font-semibold uppercase tracking-wide mb-1">{template.period}</p>
+              <div className="flex items-center gap-2 mb-1">
+                <p className="text-xs text-indigo-600 font-semibold uppercase tracking-wide">{template.period}</p>
+                {template.frequency && (
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${frequencyBadgeColor(template.frequency)}`}>
+                    {frequencyLabel(template.frequency)}
+                  </span>
+                )}
+              </div>
               <h1 className="text-xl font-bold text-gray-900">{template.title}</h1>
               <p className="text-sm text-gray-500 mt-1">
                 {unit?.name} · Due {formatDate(task.due_date)}
@@ -221,6 +255,12 @@ export default function TaskReportPage({ params }: { params: Promise<{ id: strin
               <span>Halfway</span>
               <span>Complete</span>
             </div>
+            {report.progress_pct === 100 && !isReadOnly && (
+              <div className="mt-3 bg-green-50 border border-green-200 rounded-lg px-4 py-3 flex items-center gap-2 text-sm text-green-700">
+                <CheckCircle2 size={15} className="text-green-500 shrink-0" />
+                Task complete — this will be submitted automatically when you save.
+              </div>
+            )}
           </div>
 
           {/* 3. Challenges */}
@@ -297,7 +337,7 @@ export default function TaskReportPage({ params }: { params: Promise<{ id: strin
         </div>
 
         {/* Action buttons */}
-        {!isReadOnly && (
+        {!isReadOnly && !blocked && (
           <div className="mt-8 flex gap-3">
             <button
               onClick={handleSaveDraft}

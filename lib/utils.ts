@@ -1,4 +1,4 @@
-import type { TaskStatus, ReportStatus, OrgLevel, UserRole } from './types'
+import type { TaskStatus, ReportStatus, OrgLevel, UserRole, ReportFrequency } from './types'
 
 export function statusLabel(s: TaskStatus): string {
   return {
@@ -71,4 +71,17 @@ export function progressColor(pct: number): string {
 
 export function generateId(): string {
   return Math.random().toString(36).slice(2, 10)
+}
+
+export function frequencyLabel(f: ReportFrequency): string {
+  return { weekly: 'Weekly', biweekly: 'Bi-Weekly', monthly: 'Monthly', quarterly: 'Quarterly' }[f]
+}
+
+export function frequencyBadgeColor(f: ReportFrequency): string {
+  return {
+    weekly:    'bg-violet-100 text-violet-700',
+    biweekly:  'bg-sky-100 text-sky-700',
+    monthly:   'bg-amber-100 text-amber-700',
+    quarterly: 'bg-teal-100 text-teal-700',
+  }[f]
 }
