@@ -1,8 +1,9 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
-import type { User, ReportTemplate, Task, OrgUnit } from './types'
-import { users, templates as initialTemplates, tasks as initialTasks, orgUnits } from './mock-data'
+import type { User, ReportTemplate, Task, OrgUnit, TaskComment, ActivityEntry, ActivityType } from './types'
+import { users, templates as initialTemplates, tasks as initialTasks, orgUnits, comments as initialComments, activityLog as initialActivityLog } from './mock-data'
+import { generateId } from './utils'
 
 interface AppState {
   currentUser: User | null
@@ -11,12 +12,18 @@ interface AppState {
   templates: ReportTemplate[]
   tasks: Task[]
   orgUnits: OrgUnit[]
+  comments: TaskComment[]
+  activityLog: ActivityEntry[]
   login: (email: string) => boolean
   logout: () => void
   addTemplate: (t: ReportTemplate) => void
   updateTemplate: (t: ReportTemplate) => void
   createTask: (t: Task) => void
   updateTask: (id: string, updates: Partial<Task>) => void
+  addComment: (taskId: string, content: string) => void
+  addActivity: (type: ActivityType, taskId: string, note?: string) => void
+  getTaskComments: (taskId: string) => TaskComment[]
+  getRecentActivity: (limit?: number) => ActivityEntry[]
   getOrgUnit: (id: string) => OrgUnit | undefined
   getUser: (id: string) => User | undefined
   getTemplate: (id: string) => ReportTemplate | undefined
@@ -40,6 +47,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [authReady, setAuthReady] = useState(false)
   const [templates, setTemplates] = useState<ReportTemplate[]>(initialTemplates)
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
+  const [comments, setComments] = useState<TaskComment[]>(initialComments)
+  const [activityLog, setActivityLog] = useState<ActivityEntry[]>(initialActivityLog)
 
   useEffect(() => {
     const stored = localStorage.getItem('rf_user')
@@ -70,10 +79,91 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   function createTask(t: Task) {
     setTasks(prev => [t, ...prev])
+    // Log task creation
+    if (currentUser) {
+      const entry: ActivityEntry = {
+        id: generateId(),
+        type: 'task_created',
+        task_id: t.id,
+        actor_id: currentUser.id,
+        timestamp: new Date().toISOString(),
+      }
+      setActivityLog(prev => [entry, ...prev])
+    }
   }
 
   function updateTask(id: string, updates: Partial<Task>) {
     setTasks(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t))
+
+    // Auto-log status transitions
+    if (currentUser && updates.status) {
+      let type: ActivityType | null = null
+      if (updates.status === 'submitted') type = 'task_submitted'
+      else if (updates.status === 'approved') type = 'task_approved'
+      else if (updates.status === 'rejected') type = 'task_rejected'
+      if (type) {
+        const entry: ActivityEntry = {
+          id: generateId(),
+          type,
+          task_id: id,
+          actor_id: currentUser.id,
+          timestamp: new Date().toISOString(),
+          note: updates.reviewer_notes,
+        }
+        setActivityLog(prev => [entry, ...prev])
+      }
+    }
+  }
+
+  function addComment(taskId: string, content: string) {
+    if (!currentUser || !content.trim()) return
+    const comment: TaskComment = {
+      id: generateId(),
+      task_id: taskId,
+      author_id: currentUser.id,
+      content: content.trim(),
+      created_at: new Date().toISOString(),
+    }
+    setComments(prev => [...prev, comment])
+    const entry: ActivityEntry = {
+      id: generateId(),
+      type: 'comment_added',
+      task_id: taskId,
+      actor_id: currentUser.id,
+      timestamp: new Date().toISOString(),
+      note: content.trim().slice(0, 80),
+    }
+    setActivityLog(prev => [entry, ...prev])
+  }
+
+  function addActivity(type: ActivityType, taskId: string, note?: string) {
+    if (!currentUser) return
+    const entry: ActivityEntry = {
+      id: generateId(),
+      type,
+      task_id: taskId,
+      actor_id: currentUser.id,
+      timestamp: new Date().toISOString(),
+      note,
+    }
+    setActivityLog(prev => [entry, ...prev])
+  }
+
+  function getTaskComments(taskId: string): TaskComment[] {
+    return comments.filter(c => c.task_id === taskId).sort(
+      (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    )
+  }
+
+  function getRecentActivity(limit = 20): ActivityEntry[] {
+    const scopeIds = getScopeOrgUnitIds()
+    const scopeTaskIds = tasks
+      .filter(t => scopeIds.includes(t.org_unit_id))
+      .map(t => t.id)
+    return activityLog
+      .filter(e => scopeTaskIds.includes(e.task_id))
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, limit)
   }
 
   function getOrgUnit(id: string) {
@@ -194,7 +284,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider value={{
       currentUser, authReady, allUsers: users, templates, tasks, orgUnits,
+      comments, activityLog,
       login, logout, addTemplate, updateTemplate, createTask, updateTask,
+      addComment, addActivity, getTaskComments, getRecentActivity,
       getOrgUnit, getUser, getTemplate, getTasksForUser, getTasksForTemplate,
       getChildUnits, getChildTasks, computeProgress, getDirectReports, getScopeOrgUnitIds,
       isTaskBlocked, getBlockingTasks, computeChildProgress, getTaskDisplayTitle,

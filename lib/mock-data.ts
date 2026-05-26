@@ -1,4 +1,4 @@
-import type { OrgUnit, User, ReportTemplate, Task } from './types'
+import type { OrgUnit, User, ReportTemplate, Task, TaskComment, ActivityEntry } from './types'
 
 export const orgUnits: OrgUnit[] = [
   // Top
@@ -338,4 +338,27 @@ export const tasks: Task[] = [
     status: 'not_started', due_date: '2026-07-31',
     responses: {},
   },
+]
+
+export const comments: TaskComment[] = [
+  { id: 'c1', task_id: 'tk-s1-t1', author_id: 'u-mgr1', content: 'Victor, make sure to include tower status for sites 12–15 in your report.', created_at: '2026-05-23T09:00:00Z' },
+  { id: 'c2', task_id: 'tk-s1-t1', author_id: 'u-s1',   content: 'Noted Bruce. Sites 12 and 13 are done. 14–15 have power issues — working on it.', created_at: '2026-05-23T11:30:00Z' },
+  { id: 'c3', task_id: 'tk-s1-t1', author_id: 'u-mgr1', content: 'Thanks for the update. Escalate the power issue to RURA if not resolved by end of week.', created_at: '2026-05-23T14:00:00Z' },
+  { id: 'c4', task_id: 'tk-s6-t2', author_id: 'u-mgr2', content: 'Great submission Irene! Can you add the breakdown per district in next week\'s report?', created_at: '2026-05-21T10:00:00Z' },
+  { id: 'c5', task_id: 'tk-s9-t2', author_id: 'u-mgr4', content: 'Please recheck the registration count — it doesn\'t match the Irembo dashboard figures.', created_at: '2026-05-23T16:00:00Z' },
+]
+
+export const activityLog: ActivityEntry[] = [
+  { id: 'a1',  type: 'task_assigned',  task_id: 'tk-s1-t1',   actor_id: 'u-mgr1', timestamp: '2026-05-20T08:00:00Z' },
+  { id: 'a2',  type: 'task_assigned',  task_id: 'tk-s6-t2',   actor_id: 'u-mgr2', timestamp: '2026-05-20T08:05:00Z' },
+  { id: 'a3',  type: 'task_submitted', task_id: 'tk-s4-t1',   actor_id: 'u-s4',   timestamp: '2026-05-22T09:00:00Z' },
+  { id: 'a4',  type: 'task_approved',  task_id: 'tk-s4-t1',   actor_id: 'u-mgr3', timestamp: '2026-05-23T14:00:00Z', note: 'Well documented.' },
+  { id: 'a5',  type: 'task_submitted', task_id: 'tk-s6-t2',   actor_id: 'u-s6',   timestamp: '2026-05-20T10:00:00Z' },
+  { id: 'a6',  type: 'task_approved',  task_id: 'tk-s6-t2',   actor_id: 'u-mgr2', timestamp: '2026-05-21T09:00:00Z' },
+  { id: 'a7',  type: 'comment_added',  task_id: 'tk-s1-t1',   actor_id: 'u-mgr1', timestamp: '2026-05-23T09:00:00Z' },
+  { id: 'a8',  type: 'comment_added',  task_id: 'tk-s1-t1',   actor_id: 'u-s1',   timestamp: '2026-05-23T11:30:00Z' },
+  { id: 'a9',  type: 'task_submitted', task_id: 'tk-s1-t1',   actor_id: 'u-s1',   timestamp: '2026-05-24T10:00:00Z' },
+  { id: 'a10', type: 'task_submitted', task_id: 'tk-s5-t1',   actor_id: 'u-s5',   timestamp: '2026-05-25T08:30:00Z' },
+  { id: 'a11', type: 'task_rejected',  task_id: 'tk-s9-t2',   actor_id: 'u-mgr4', timestamp: '2026-05-23T17:00:00Z', note: 'Registration count mismatch.' },
+  { id: 'a12', type: 'task_submitted', task_id: 'tk-s4-t3',   actor_id: 'u-s4',   timestamp: '2026-05-26T09:00:00Z' },
 ]

@@ -4,18 +4,20 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, FileText, ClipboardList,
-  BarChart3, LogOut, ChevronRight, Users, PlusCircle,
+  BarChart3, LogOut, ChevronRight, Users, PlusCircle, Bell, Search,
 } from 'lucide-react'
 import { useApp } from '@/lib/context'
 import { roleLabel, roleBadgeColor } from '@/lib/utils'
 import type { UserRole } from '@/lib/types'
 
-type NavItem = { href: string; label: string; icon: React.ElementType; roles?: UserRole[] }
+type NavItem = { href: string; label: string; icon: React.ElementType; roles?: UserRole[]; badge?: boolean }
 
 const NAV: NavItem[] = [
   { href: '/dashboard',  label: 'Dashboard',    icon: LayoutDashboard },
   { href: '/tasks',      label: 'My Tasks',     icon: ClipboardList,
     roles: ['staff', 'division_manager'] },
+  { href: '/approvals',  label: 'Approvals',    icon: Bell,
+    roles: ['division_manager', 'c_level', 'ceo'], badge: true },
   { href: '/team',       label: 'Team Reports', icon: Users,
     roles: ['division_manager', 'c_level', 'ceo'] },
   { href: '/tasks/new',  label: 'Create Task',  icon: PlusCircle,
@@ -26,13 +28,14 @@ const NAV: NavItem[] = [
     roles: ['division_manager', 'c_level', 'ceo'] },
 ]
 
-export function Sidebar({ onClose }: { onClose?: () => void }) {
+export function Sidebar({ onClose, onSearch }: { onClose?: () => void; onSearch?: () => void }) {
   const pathname = usePathname()
   const router = useRouter()
-  const { currentUser, logout } = useApp()
+  const { currentUser, logout, tasks } = useApp()
   const role = currentUser?.role
 
   const visibleNav = NAV.filter(item => !item.roles || (role && item.roles.includes(role)))
+  const pendingCount = tasks.filter(t => t.status === 'submitted').length
 
   function handleLogout() {
     logout()
@@ -53,10 +56,21 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
         </div>
       </div>
 
+      {/* Search bar */}
+      <button
+        onClick={onSearch}
+        className="mx-3 mt-3 flex items-center gap-2 px-3 py-2.5 rounded-lg bg-indigo-800 hover:bg-indigo-700 text-indigo-300 hover:text-white transition-colors text-sm"
+      >
+        <Search size={14} />
+        <span className="flex-1 text-left text-xs">Search…</span>
+        <kbd className="text-[10px] bg-indigo-700 px-1 rounded font-mono opacity-70">⌘K</kbd>
+      </button>
+
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {visibleNav.map(({ href, label, icon: Icon }) => {
+      <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
+        {visibleNav.map(({ href, label, icon: Icon, badge }) => {
           const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
+          const count = badge ? pendingCount : 0
           return (
             <Link
               key={href}
@@ -69,8 +83,13 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
               }`}
             >
               <Icon size={18} />
-              {label}
-              {active && <ChevronRight size={14} className="ml-auto" />}
+              <span className="flex-1">{label}</span>
+              {count > 0 && (
+                <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center leading-none">
+                  {count}
+                </span>
+              )}
+              {active && count === 0 && <ChevronRight size={14} className="ml-auto" />}
             </Link>
           )
         })}

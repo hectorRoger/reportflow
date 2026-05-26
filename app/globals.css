@@ -39,6 +39,44 @@ body {
 ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
+/* Print styles for report export */
+@media print {
+  /* Hide chrome */
+  header, nav, aside, footer,
+  .no-print, button, [role="navigation"] {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: #111827 !important;
+    font-size: 12pt;
+  }
+
+  main {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .print-page {
+    page-break-after: always;
+  }
+
+  /* Flatten cards for print */
+  .bg-white, [class*="rounded-xl"], [class*="rounded-2xl"] {
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+    border-radius: 4pt !important;
+  }
+
+  /* Expand all collapsed sections */
+  [aria-expanded="false"] {
+    display: block !important;
+  }
+
+  a { text-decoration: none; color: inherit; }
+}
+
 /* Slide-in animation for toasts */
 @keyframes slide-in-from-bottom-2 {
   from { transform: translateY(8px); opacity: 0; }

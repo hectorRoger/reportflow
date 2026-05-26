@@ -1,9 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Menu } from 'lucide-react'
+import { Menu, Search } from 'lucide-react'
 import { Sidebar } from '@/components/sidebar'
+import { BottomNav } from '@/components/bottom-nav'
+import { SearchModal } from '@/components/search-modal'
 import { useApp } from '@/lib/context'
 
 function Skeleton() {
@@ -21,6 +23,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { currentUser, authReady } = useApp()
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
 
   useEffect(() => {
     if (authReady && !currentUser) router.push('/login')
@@ -28,6 +31,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   // Close sidebar on route change
   useEffect(() => { setSidebarOpen(false) }, [])
+
+  // Cmd+K / Ctrl+K global shortcut
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault()
+      setSearchOpen(s => !s)
+    }
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
 
   if (!authReady) return <Skeleton />
   if (!currentUser) return null
@@ -48,7 +64,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         transform transition-transform duration-300 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
-        <Sidebar onClose={() => setSidebarOpen(false)} />
+        <Sidebar onClose={() => setSidebarOpen(false)} onSearch={() => { setSidebarOpen(false); setSearchOpen(true) }} />
       </div>
 
       {/* Main column */}
@@ -70,17 +86,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
             <span className="font-semibold text-gray-900 text-sm">ReportFlow</span>
           </div>
-          {/* Avatar */}
-          <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700
-            flex items-center justify-center text-xs font-bold">
-            {currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-          </div>
+          {/* Search button */}
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+            aria-label="Search"
+          >
+            <Search size={15} />
+          </button>
         </header>
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto pb-16 lg:pb-0">
           {children}
         </main>
+
+        {/* Mobile bottom navigation */}
+        <BottomNav />
       </div>
+
+      {/* Global search modal */}
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </div>
   )
 }

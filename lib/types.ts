@@ -1,4 +1,7 @@
 export type UserRole = 'ceo' | 'c_level' | 'division_manager' | 'staff'
+export type ActivityType =
+  | 'task_created' | 'task_submitted' | 'task_approved'
+  | 'task_rejected' | 'task_assigned' | 'comment_added'
 export type OrgLevel = 'organization' | 'directorate' | 'division' | 'unit'
 export type FieldType = 'text' | 'number' | 'percentage' | 'date' | 'select' | 'textarea' | 'checkbox' | 'file'
 export type ReportStatus = 'draft' | 'active' | 'closed'
@@ -42,6 +45,23 @@ export interface ReportTemplate {
   frequency?: ReportFrequency
   assigned_levels: OrgLevel[]
   fields: FormField[]
+}
+
+export interface TaskComment {
+  id: string
+  task_id: string
+  author_id: string
+  content: string
+  created_at: string
+}
+
+export interface ActivityEntry {
+  id: string
+  type: ActivityType
+  task_id: string
+  actor_id: string
+  timestamp: string
+  note?: string        // reviewer note, comment snippet, etc.
 }
 
 export interface TaskReport {

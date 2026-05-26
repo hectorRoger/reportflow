@@ -3,7 +3,7 @@
 import { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronLeft, CheckCircle, Clock, Users, ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronLeft, CheckCircle, Clock, Users, ChevronDown, ChevronUp, Printer } from 'lucide-react'
 import { useApp } from '@/lib/context'
 import { ProgressBar } from '@/components/progress-bar'
 import { statusLabel, statusColor, formatDate, isOverdue, levelLabel, generateId } from '@/lib/utils'
@@ -180,9 +180,17 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-4xl mx-auto">
-      <Link href="/reports" className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6">
-        <ChevronLeft size={16} /> Back to Reports
-      </Link>
+      <div className="flex items-center justify-between mb-6 no-print">
+        <Link href="/reports" className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700">
+          <ChevronLeft size={16} /> Back to Reports
+        </Link>
+        <button
+          onClick={() => window.print()}
+          className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 text-gray-600 text-sm rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          <Printer size={14} /> Export PDF
+        </button>
+      </div>
 
       <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-6 mb-6">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">

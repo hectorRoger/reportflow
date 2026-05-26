@@ -73,6 +73,37 @@ export function generateId(): string {
   return Math.random().toString(36).slice(2, 10)
 }
 
+export function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime()
+  const secs = Math.floor(diff / 1000)
+  if (secs < 60) return 'just now'
+  const mins = Math.floor(secs / 60)
+  if (mins < 60) return `${mins}m ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  if (days < 7) return `${days}d ago`
+  return formatDate(iso)
+}
+
+export function getISOWeek(date = new Date()): string {
+  const d = new Date(date)
+  d.setHours(0, 0, 0, 0)
+  d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7))
+  const week1 = new Date(d.getFullYear(), 0, 4)
+  const wn = 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7)
+  return `${d.getFullYear()}-W${String(wn).padStart(2, '0')}`
+}
+
+export function weekLabel(date = new Date()): string {
+  const monday = new Date(date)
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7))
+  const friday = new Date(monday)
+  friday.setDate(friday.getDate() + 4)
+  const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' }
+  return `${monday.toLocaleDateString('en-GB', opts)} – ${friday.toLocaleDateString('en-GB', opts)}`
+}
+
 export function frequencyLabel(f: ReportFrequency): string {
   return { weekly: 'Weekly', biweekly: 'Bi-Weekly', monthly: 'Monthly', quarterly: 'Quarterly' }[f]
 }
