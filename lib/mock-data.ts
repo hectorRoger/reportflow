@@ -32,40 +32,40 @@ export const orgUnits: OrgUnit[] = [
 
 export const users: User[] = [
   // ── CEO ─────────────────────────────────────────────────────────────────────
-  { id: 'u-ceo', name: 'Tony Habimana',  email: 'ceo@risa.gov.rw',   role: 'ceo',     org_unit_id: 'risa' },
+  { id: 'u-ceo', name: 'Tony',   email: 'ceo@risa.gov.rw',   role: 'ceo',     org_unit_id: 'risa' },
 
   // ── C-Level (CTO · COSO · CFO) ──────────────────────────────────────────────
-  { id: 'u-cto',  name: 'Roger Mizero',    email: 'cto@risa.gov.rw',   role: 'c_level', org_unit_id: 'dir-ict' },
-  { id: 'u-coso', name: 'Eric Manzi',      email: 'coso@risa.gov.rw',  role: 'c_level', org_unit_id: 'dir-dt' },
-  { id: 'u-cfo',  name: 'Grace Ingabire',  email: 'cfo@risa.gov.rw',   role: 'c_level', org_unit_id: 'dir-corp' },
+  { id: 'u-cto',  name: 'Roger',  email: 'cto@risa.gov.rw',   role: 'c_level', org_unit_id: 'dir-ict' },  // CTO
+  { id: 'u-coso', name: 'Eric',   email: 'coso@risa.gov.rw',  role: 'c_level', org_unit_id: 'dir-dt' },   // COSO
+  { id: 'u-cfo',  name: 'Grace',  email: 'cfo@risa.gov.rw',   role: 'c_level', org_unit_id: 'dir-corp' }, // CFO
 
   // ── Division Managers ───────────────────────────────────────────────────────
-  { id: 'u-mgr1', name: 'Bruce Nkurunziza',  email: 'manager@risa.gov.rw',   role: 'division_manager', org_unit_id: 'div-netops' },
-  { id: 'u-mgr2', name: 'Claire Umutoni',    email: 'manager2@risa.gov.rw',  role: 'division_manager', org_unit_id: 'div-egov' },
-  { id: 'u-mgr3', name: 'Patrick Rurangwa',  email: 'manager3@risa.gov.rw',  role: 'division_manager', org_unit_id: 'div-syshard' },
-  { id: 'u-mgr4', name: 'Diane Uwitonze',    email: 'manager4@risa.gov.rw',  role: 'division_manager', org_unit_id: 'div-citizen' },
-  { id: 'u-mgr5', name: 'Samuel Ndayisaba',  email: 'manager5@risa.gov.rw',  role: 'division_manager', org_unit_id: 'div-finance' },
+  { id: 'u-mgr1', name: 'Bruce',    email: 'manager@risa.gov.rw',   role: 'division_manager', org_unit_id: 'div-netops' },
+  { id: 'u-mgr2', name: 'Claire',   email: 'manager2@risa.gov.rw',  role: 'division_manager', org_unit_id: 'div-egov' },
+  { id: 'u-mgr3', name: 'Patrick',  email: 'manager3@risa.gov.rw',  role: 'division_manager', org_unit_id: 'div-syshard' },
+  { id: 'u-mgr4', name: 'Diane',    email: 'manager4@risa.gov.rw',  role: 'division_manager', org_unit_id: 'div-citizen' },
+  { id: 'u-mgr5', name: 'Samuel',   email: 'manager5@risa.gov.rw',  role: 'division_manager', org_unit_id: 'div-finance' },
 
   // ── Staff ───────────────────────────────────────────────────────────────────
   // Network Operations
-  { id: 'u-s1',  name: 'Victor Hakizimana', email: 'staff@risa.gov.rw',    role: 'staff', org_unit_id: 'unit-conn' },
-  { id: 'u-s2',  name: 'Ester Mukamana',    email: 'staff2@risa.gov.rw',   role: 'staff', org_unit_id: 'unit-fiber' },
-  { id: 'u-s3',  name: 'Frank Uwase',       email: 'staff3@risa.gov.rw',   role: 'staff', org_unit_id: 'unit-conn' },
+  { id: 'u-s1',  name: 'Victor',   email: 'staff@risa.gov.rw',    role: 'staff', org_unit_id: 'unit-conn' },
+  { id: 'u-s2',  name: 'Ester',    email: 'staff2@risa.gov.rw',   role: 'staff', org_unit_id: 'unit-fiber' },
+  { id: 'u-s3',  name: 'Frank',    email: 'staff3@risa.gov.rw',   role: 'staff', org_unit_id: 'unit-conn' },
 
   // Systems & Hardware
-  { id: 'u-s4',  name: 'Gloria Iradukunda', email: 'staff4@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-dc' },
-  { id: 'u-s5',  name: 'Henri Bizimana',    email: 'staff5@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-hw' },
+  { id: 'u-s4',  name: 'Gloria',   email: 'staff4@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-dc' },
+  { id: 'u-s5',  name: 'Henri',    email: 'staff5@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-hw' },
 
   // e-Government
-  { id: 'u-s6',  name: 'Irene Nyiramana',   email: 'staff6@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-irembo' },
-  { id: 'u-s7',  name: 'Joseph Nzeyimana',  email: 'staff7@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-data' },
+  { id: 'u-s6',  name: 'Irene',    email: 'staff6@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-irembo' },
+  { id: 'u-s7',  name: 'Joseph',   email: 'staff7@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-data' },
 
   // Citizen Digital Services
-  { id: 'u-s8',  name: 'Keza Uwizeyimana',  email: 'staff8@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-citizen' },
-  { id: 'u-s9',  name: 'Léon Ndagijimana',  email: 'staff9@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-ux' },
+  { id: 'u-s8',  name: 'Keza',     email: 'staff8@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-citizen' },
+  { id: 'u-s9',  name: 'Leon',     email: 'staff9@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-ux' },
 
   // Finance
-  { id: 'u-s10', name: 'Marie Mukeshimana', email: 'staff10@risa.gov.rw', role: 'staff', org_unit_id: 'unit-fin' },
+  { id: 'u-s10', name: 'Marie',    email: 'staff10@risa.gov.rw', role: 'staff', org_unit_id: 'unit-fin' },
 ]
 
 export const templates: ReportTemplate[] = [
