@@ -5,12 +5,12 @@ export const orgUnits: OrgUnit[] = [
   { id: 'risa', name: 'RISA', level: 'organization', parent_id: null },
 
   // Directorates (C-level)
-  { id: 'dir-ict',  name: 'ICT Infrastructure Directorate',    level: 'directorate', parent_id: 'risa' },
+  { id: 'dir-ict',  name: 'Technology Directorate',            level: 'directorate', parent_id: 'risa' },
   { id: 'dir-dt',   name: 'Digital Transformation Directorate', level: 'directorate', parent_id: 'risa' },
   { id: 'dir-corp', name: 'Corporate Services Directorate',     level: 'directorate', parent_id: 'risa' },
 
   // Divisions (Division Manager level)
-  { id: 'div-netops',  name: 'Network Operations Division',        level: 'division', parent_id: 'dir-ict' },
+  { id: 'div-netops',  name: 'Software Solutions Division',        level: 'division', parent_id: 'dir-ict' },
   { id: 'div-syshard', name: 'Systems & Hardware Division',         level: 'division', parent_id: 'dir-ict' },
   { id: 'div-egov',    name: 'e-Government Division',               level: 'division', parent_id: 'dir-dt' },
   { id: 'div-citizen', name: 'Citizen Digital Services Division',   level: 'division', parent_id: 'dir-dt' },

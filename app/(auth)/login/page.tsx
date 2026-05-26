@@ -15,14 +15,14 @@ const demoAccounts: { label: string; sub: string; email: string; role: UserRole;
   },
   {
     label: 'C-Level',
-    sub: 'Roger · CTO · ICT Infrastructure Directorate',
+    sub: 'Roger · CTO · Technology Directorate',
     email: 'cto@risa.gov.rw',
     role: 'c_level',
     color: 'border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50',
   },
   {
     label: 'Division Manager',
-    sub: 'Bruce · Network Operations Division',
+    sub: 'Bruce · Software Solutions Division',
     email: 'manager@risa.gov.rw',
     role: 'division_manager',
     color: 'border-blue-200 hover:border-blue-400 hover:bg-blue-50',
