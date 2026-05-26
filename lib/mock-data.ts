@@ -32,15 +32,15 @@ export const orgUnits: OrgUnit[] = [
 
 export const users: User[] = [
   // ── CEO ─────────────────────────────────────────────────────────────────────
-  { id: 'u-ceo', name: 'Dr. Jean Philbert Nsengimana', email: 'ceo@risa.gov.rw',   role: 'ceo',              org_unit_id: 'risa' },
+  { id: 'u-ceo', name: 'Tony Habimana',  email: 'ceo@risa.gov.rw',   role: 'ceo',     org_unit_id: 'risa' },
 
-  // ── C-Level ─────────────────────────────────────────────────────────────────
-  { id: 'u-cto', name: 'Alice Uwimana',    email: 'cto@risa.gov.rw',  role: 'c_level', org_unit_id: 'dir-ict' },
-  { id: 'u-cdo', name: 'Eric Manzi',       email: 'cdo@risa.gov.rw',  role: 'c_level', org_unit_id: 'dir-dt' },
-  { id: 'u-cfo', name: 'Grace Ingabire',   email: 'cfo@risa.gov.rw',  role: 'c_level', org_unit_id: 'dir-corp' },
+  // ── C-Level (CTO · COSO · CFO) ──────────────────────────────────────────────
+  { id: 'u-cto',  name: 'Roger Mizero',    email: 'cto@risa.gov.rw',   role: 'c_level', org_unit_id: 'dir-ict' },
+  { id: 'u-coso', name: 'Eric Manzi',      email: 'coso@risa.gov.rw',  role: 'c_level', org_unit_id: 'dir-dt' },
+  { id: 'u-cfo',  name: 'Grace Ingabire',  email: 'cfo@risa.gov.rw',   role: 'c_level', org_unit_id: 'dir-corp' },
 
   // ── Division Managers ───────────────────────────────────────────────────────
-  { id: 'u-mgr1', name: 'Bob Niyonzima',     email: 'manager@risa.gov.rw',   role: 'division_manager', org_unit_id: 'div-netops' },
+  { id: 'u-mgr1', name: 'Bruce Nkurunziza',  email: 'manager@risa.gov.rw',   role: 'division_manager', org_unit_id: 'div-netops' },
   { id: 'u-mgr2', name: 'Claire Umutoni',    email: 'manager2@risa.gov.rw',  role: 'division_manager', org_unit_id: 'div-egov' },
   { id: 'u-mgr3', name: 'Patrick Rurangwa',  email: 'manager3@risa.gov.rw',  role: 'division_manager', org_unit_id: 'div-syshard' },
   { id: 'u-mgr4', name: 'Diane Uwitonze',    email: 'manager4@risa.gov.rw',  role: 'division_manager', org_unit_id: 'div-citizen' },
@@ -48,9 +48,9 @@ export const users: User[] = [
 
   // ── Staff ───────────────────────────────────────────────────────────────────
   // Network Operations
-  { id: 'u-s1',  name: 'David Habimana',   email: 'staff@risa.gov.rw',    role: 'staff', org_unit_id: 'unit-conn' },
-  { id: 'u-s2',  name: 'Ester Mukamana',   email: 'staff2@risa.gov.rw',   role: 'staff', org_unit_id: 'unit-fiber' },
-  { id: 'u-s3',  name: 'Frank Uwase',      email: 'staff3@risa.gov.rw',   role: 'staff', org_unit_id: 'unit-conn' },
+  { id: 'u-s1',  name: 'Victor Hakizimana', email: 'staff@risa.gov.rw',    role: 'staff', org_unit_id: 'unit-conn' },
+  { id: 'u-s2',  name: 'Ester Mukamana',    email: 'staff2@risa.gov.rw',   role: 'staff', org_unit_id: 'unit-fiber' },
+  { id: 'u-s3',  name: 'Frank Uwase',       email: 'staff3@risa.gov.rw',   role: 'staff', org_unit_id: 'unit-conn' },
 
   // Systems & Hardware
   { id: 'u-s4',  name: 'Gloria Iradukunda', email: 'staff4@risa.gov.rw',  role: 'staff', org_unit_id: 'unit-dc' },
@@ -264,7 +264,7 @@ export const tasks: Task[] = [
   // ════════════════════════════════════════════════════════════════
   {
     id: 'tk-mgr2-t2', template_id: 't2', org_unit_id: 'div-egov', parent_task_id: null,
-    assigned_to_user_id: 'u-mgr2', assigned_by_user_id: 'u-cdo',
+    assigned_to_user_id: 'u-mgr2', assigned_by_user_id: 'u-coso',
     status: 'in_progress', due_date: '2026-06-30',
     responses: { f1: 162500 },
     report: {
@@ -276,7 +276,7 @@ export const tasks: Task[] = [
   },
   {
     id: 'tk-mgr4-t2', template_id: 't2', org_unit_id: 'div-citizen', parent_task_id: null,
-    assigned_to_user_id: 'u-mgr4', assigned_by_user_id: 'u-cdo',
+    assigned_to_user_id: 'u-mgr4', assigned_by_user_id: 'u-coso',
     status: 'not_started', due_date: '2026-06-30',
     responses: {},
   },

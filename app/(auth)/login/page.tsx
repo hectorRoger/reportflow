@@ -8,28 +8,28 @@ import type { UserRole } from '@/lib/types'
 const demoAccounts: { label: string; sub: string; email: string; role: UserRole; color: string }[] = [
   {
     label: 'CEO',
-    sub: 'Dr. Jean Philbert Nsengimana · Full visibility',
+    sub: 'Tony Habimana · Full visibility',
     email: 'ceo@risa.gov.rw',
     role: 'ceo',
     color: 'border-purple-200 hover:border-purple-400 hover:bg-purple-50',
   },
   {
     label: 'C-Level (CTO)',
-    sub: 'Alice Uwimana · ICT Infrastructure Directorate',
+    sub: 'Roger Mizero · ICT Infrastructure Directorate',
     email: 'cto@risa.gov.rw',
     role: 'c_level',
     color: 'border-indigo-200 hover:border-indigo-400 hover:bg-indigo-50',
   },
   {
     label: 'Division Manager',
-    sub: 'Bob Niyonzima · Network Operations Division',
+    sub: 'Bruce Nkurunziza · Network Operations Division',
     email: 'manager@risa.gov.rw',
     role: 'division_manager',
     color: 'border-blue-200 hover:border-blue-400 hover:bg-blue-50',
   },
   {
     label: 'Staff',
-    sub: 'David Habimana · Connectivity Unit',
+    sub: 'Victor Hakizimana · Connectivity Unit',
     email: 'staff@risa.gov.rw',
     role: 'staff',
     color: 'border-gray-200 hover:border-gray-400 hover:bg-gray-50',
