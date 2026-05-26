@@ -20,11 +20,10 @@ const FIELD_TYPES: { value: FieldType; label: string }[] = [
 ]
 
 const LEVELS: { value: OrgLevel; label: string }[] = [
-  { value: 'national', label: 'National' },
-  { value: 'province', label: 'Province' },
-  { value: 'district', label: 'District' },
-  { value: 'sector', label: 'Sector' },
-  { value: 'cell', label: 'Cell' },
+  { value: 'organization', label: 'Organisation' },
+  { value: 'directorate',  label: 'Directorate' },
+  { value: 'division',     label: 'Division' },
+  { value: 'unit',         label: 'Unit' },
 ]
 
 export default function NewReportPage() {
@@ -35,7 +34,7 @@ export default function NewReportPage() {
   const [description, setDescription] = useState('')
   const [period, setPeriod] = useState('')
   const [dueDate, setDueDate] = useState('')
-  const [assignedLevels, setAssignedLevels] = useState<OrgLevel[]>(['district'])
+  const [assignedLevels, setAssignedLevels] = useState<OrgLevel[]>(['division'])
   const [fields, setFields] = useState<FormField[]>([
     { id: generateId(), label: '', type: 'text', required: true },
   ])

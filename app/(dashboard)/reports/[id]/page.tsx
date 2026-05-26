@@ -294,7 +294,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                         <div key={child.id} className="flex items-center justify-between pl-16 pr-6 py-3">
                           <div>
                             <p className="text-sm text-gray-700">{childUnit?.name}</p>
-                            <p className="text-xs text-gray-400">{levelLabel(childUnit?.level || 'sector')}</p>
+                            <p className="text-xs text-gray-400">{childUnit?.level ? levelLabel(childUnit.level) : ''}</p>
                           </div>
                           <div className="flex items-center gap-3">
                             {canApprove && child.status === 'submitted' && (
