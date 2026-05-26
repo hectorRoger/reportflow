@@ -13,16 +13,16 @@ import type { UserRole } from '@/lib/types'
 type NavItem = { href: string; label: string; icon: React.ElementType; roles?: UserRole[] }
 
 const NAV: NavItem[] = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/tasks',     label: 'My Tasks',  icon: ClipboardList,
+  { href: '/dashboard',  label: 'Dashboard',    icon: LayoutDashboard },
+  { href: '/tasks',      label: 'My Tasks',     icon: ClipboardList,
     roles: ['staff', 'division_manager'] },
-  { href: '/team',      label: 'Team Reports', icon: Users,
+  { href: '/team',       label: 'Team Reports', icon: Users,
     roles: ['division_manager', 'c_level', 'ceo'] },
-  { href: '/assign',    label: 'Assign Task', icon: PlusCircle,
+  { href: '/tasks/new',  label: 'Create Task',  icon: PlusCircle,
     roles: ['division_manager', 'c_level', 'ceo'] },
-  { href: '/reports',   label: 'Reports',   icon: FileText,
+  { href: '/reports',    label: 'Reports',      icon: FileText,
     roles: ['c_level', 'ceo'] },
-  { href: '/progress',  label: 'Progress',  icon: BarChart3,
+  { href: '/progress',   label: 'Progress',     icon: BarChart3,
     roles: ['division_manager', 'c_level', 'ceo'] },
 ]
 

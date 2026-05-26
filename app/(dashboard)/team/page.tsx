@@ -13,7 +13,7 @@ function ReportCard({ user, task, onApprove, onReject }: {
   onApprove: (id: string, notes: string) => void
   onReject: (id: string, notes: string) => void
 }) {
-  const { getTemplate, getOrgUnit } = useApp()
+  const { getTemplate, getOrgUnit, getTaskDisplayTitle } = useApp()
   const [expanded, setExpanded] = useState(false)
   const [notes, setNotes] = useState('')
   const [reviewing, setReviewing] = useState(false)
@@ -41,7 +41,7 @@ function ReportCard({ user, task, onApprove, onReject }: {
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-sm text-gray-800">{user.name}</p>
-          <p className="text-xs text-gray-400">{unit?.name} · {template?.title}</p>
+          <p className="text-xs text-gray-400">{unit?.name} · {getTaskDisplayTitle(task)}</p>
         </div>
         <div className="flex items-center gap-3">
           {/* Progress bar for in_progress */}

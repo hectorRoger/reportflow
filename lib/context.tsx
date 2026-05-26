@@ -30,6 +30,7 @@ interface AppState {
   isTaskBlocked: (taskId: string) => boolean
   getBlockingTasks: (taskId: string) => Task[]
   computeChildProgress: (parentTaskId: string) => number
+  getTaskDisplayTitle: (task: Task) => string
 }
 
 const AppContext = createContext<AppState | null>(null)
@@ -153,6 +154,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       .filter((t): t is Task => !!t && t.status !== 'approved')
   }
 
+  /** Display title for a task — uses task.title for ad-hoc tasks, template title otherwise */
+  function getTaskDisplayTitle(task: Task): string {
+    if (task.title) return task.title
+    const tmpl = templates.find(t => t.id === task.template_id)
+    return tmpl?.title || 'Untitled Task'
+  }
+
   /** Average progress_pct of all direct children of a parent task */
   function computeChildProgress(parentTaskId: string): number {
     const children = tasks.filter(t => t.parent_task_id === parentTaskId)
@@ -189,7 +197,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       login, logout, addTemplate, updateTemplate, createTask, updateTask,
       getOrgUnit, getUser, getTemplate, getTasksForUser, getTasksForTemplate,
       getChildUnits, getChildTasks, computeProgress, getDirectReports, getScopeOrgUnitIds,
-      isTaskBlocked, getBlockingTasks, computeChildProgress,
+      isTaskBlocked, getBlockingTasks, computeChildProgress, getTaskDisplayTitle,
     }}>
       {children}
     </AppContext.Provider>

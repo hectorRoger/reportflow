@@ -16,7 +16,7 @@ function TaskStatusIcon({ task }: { task: Task }) {
 
 export default function TasksPage() {
   const router = useRouter()
-  const { currentUser, getTasksForUser, getTemplate, getOrgUnit, isTaskBlocked } = useApp()
+  const { currentUser, getTasksForUser, getTemplate, getOrgUnit, isTaskBlocked, getTaskDisplayTitle } = useApp()
   const isReporter = currentUser?.role === 'staff'
 
   const allTasks = getTasksForUser().filter(t => t.parent_task_id === null)
@@ -63,15 +63,15 @@ export default function TasksPage() {
           {firstPending && (
             <div className="bg-indigo-600 rounded-2xl p-5 text-white">
               <p className="text-indigo-200 text-xs font-medium uppercase tracking-wide mb-1">Next up</p>
-              <p className="font-semibold text-lg leading-tight">{getTemplate(firstPending.template_id)?.title}</p>
+              <p className="font-semibold text-lg leading-tight">{getTaskDisplayTitle(firstPending)}</p>
               <p className="text-indigo-200 text-sm mt-1">
-                {getTemplate(firstPending.template_id)?.period} · Due {formatDate(firstPending.due_date)}
+                {getTemplate(firstPending.template_id)?.period ?? 'Task'} · Due {formatDate(firstPending.due_date)}
               </p>
               <button
                 onClick={() => router.push(`/tasks/${firstPending.id}`)}
                 className="mt-4 bg-white text-indigo-700 font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-indigo-50 transition-colors"
               >
-                {firstPending.status === 'in_progress' ? 'Continue Report →' : 'Start Report →'}
+                {firstPending.status === 'in_progress' ? 'Continue →' : 'Start →'}
               </button>
             </div>
           )}
@@ -108,7 +108,7 @@ export default function TasksPage() {
 
                       <div className="flex-1 min-w-0">
                         <p className={`font-medium text-sm ${isDone ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
-                          {template?.title}
+                          {getTaskDisplayTitle(task)}
                         </p>
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-xs text-gray-400">{template?.period}</span>
@@ -186,8 +186,8 @@ export default function TasksPage() {
               return (
                 <tr key={task.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
-                    <p className="font-medium text-gray-800">{template?.title}</p>
-                    <p className="text-xs text-gray-400">{template?.period}</p>
+                    <p className="font-medium text-gray-800">{getTaskDisplayTitle(task)}</p>
+                    <p className="text-xs text-gray-400">{template?.period ?? 'Ad-hoc task'}</p>
                   </td>
                   <td className="px-4 py-4 text-gray-600 text-xs">{getOrgUnit(task.org_unit_id)?.name ?? task.org_unit_id}</td>
                   <td className="px-4 py-4 text-xs text-gray-500">{formatDate(task.due_date)}</td>

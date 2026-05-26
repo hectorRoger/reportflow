@@ -54,7 +54,9 @@ export interface TaskReport {
 
 export interface Task {
   id: string
-  template_id: string
+  template_id: string             // use 'adhoc' for direct tasks not tied to a report template
+  title?: string                  // overrides template title for ad-hoc tasks
+  description?: string            // task description (ad-hoc tasks)
   org_unit_id: string
   parent_task_id: string | null
   depends_on?: string[]           // task IDs that must be 'approved' before this starts

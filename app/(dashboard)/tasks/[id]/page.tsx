@@ -10,11 +10,13 @@ import type { TaskReport } from '@/lib/types'
 export default function TaskReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
-  const { currentUser, tasks, getTemplate, getOrgUnit, updateTask, getTasksForUser, isTaskBlocked, getBlockingTasks } = useApp()
+  const { currentUser, tasks, getTemplate, getOrgUnit, updateTask, getTasksForUser, isTaskBlocked, getBlockingTasks, getTaskDisplayTitle } = useApp()
 
   const task = tasks.find(t => t.id === id)
   const template = task ? getTemplate(task.template_id) : null
   const unit = task ? getOrgUnit(task.org_unit_id) : null
+  const isAdhoc = !template || task?.template_id === 'adhoc'
+  const taskTitle = task ? getTaskDisplayTitle(task) : ''
 
   // All pending tasks for "X of Y" and next-task navigation
   const myTasks = getTasksForUser().filter(t => t.parent_task_id === null)
@@ -33,7 +35,7 @@ export default function TaskReportPage({ params }: { params: Promise<{ id: strin
   const [submitted, setSubmitted] = useState(false)
   const [saving, setSaving] = useState(false)
 
-  if (!task || !template) {
+  if (!task) {
     return <div className="p-8 text-gray-400">Task not found.</div>
   }
 
@@ -91,13 +93,13 @@ export default function TaskReportPage({ params }: { params: Promise<{ id: strin
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">Report Submitted!</h2>
           <p className="text-gray-500 text-sm mb-8">
-            Your report for <strong>{template.title}</strong> has been submitted and is awaiting review.
+            Your report for <strong>{taskTitle}</strong> has been submitted and is awaiting review.
           </p>
 
           {nextTask ? (
             <div className="bg-white border border-gray-200 rounded-xl p-5 mb-4 text-left">
               <p className="text-xs text-gray-400 mb-1">Next task</p>
-              <p className="font-semibold text-gray-800">{getTemplate(nextTask.template_id)?.title}</p>
+              <p className="font-semibold text-gray-800">{getTaskDisplayTitle(nextTask)}</p>
               <p className="text-xs text-gray-400 mt-0.5">Due {formatDate(nextTask.due_date)}</p>
               <button
                 onClick={() => router.push(`/tasks/${nextTask.id}`)}
@@ -166,7 +168,7 @@ export default function TaskReportPage({ params }: { params: Promise<{ id: strin
               <p className="text-xs font-semibold text-amber-700 mb-1">This task is blocked</p>
               <p className="text-sm text-amber-800">
                 Waiting for approval of:{' '}
-                {blockingTasks.map(t => getTemplate(t.template_id)?.title ?? t.id).join(', ')}
+                {blockingTasks.map(t => getTaskDisplayTitle(t)).join(', ')}
               </p>
             </div>
           </div>
@@ -182,14 +184,22 @@ export default function TaskReportPage({ params }: { params: Promise<{ id: strin
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <p className="text-xs text-indigo-600 font-semibold uppercase tracking-wide">{template.period}</p>
-                {template.frequency && (
+                {!isAdhoc && template?.period && (
+                  <p className="text-xs text-indigo-600 font-semibold uppercase tracking-wide">{template.period}</p>
+                )}
+                {!isAdhoc && template?.frequency && (
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${frequencyBadgeColor(template.frequency)}`}>
                     {frequencyLabel(template.frequency)}
                   </span>
                 )}
+                {isAdhoc && (
+                  <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-gray-100 text-gray-600">Task</span>
+                )}
               </div>
-              <h1 className="text-xl font-bold text-gray-900">{template.title}</h1>
+              <h1 className="text-xl font-bold text-gray-900">{taskTitle}</h1>
+              {task.description && (
+                <p className="text-sm text-gray-500 mt-0.5">{task.description}</p>
+              )}
               <p className="text-sm text-gray-500 mt-1">
                 {unit?.name} · Due {formatDate(task.due_date)}
               </p>
